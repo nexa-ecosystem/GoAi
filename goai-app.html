@@ -1,9 +1,519 @@
-<html>
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-    <title>GoAI App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOai - Нейросеть от NEXA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .company {
+            font-size: 14px;
+            opacity: 0.9;
+            letter-spacing: 2px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-scan {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            font-size: 18px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+
+        .btn-scan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(17, 153, 142, 0.3);
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .user-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-info-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .user-info-value {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .scan-animation {
+            text-align: center;
+            padding: 40px 0;
+            display: none;
+        }
+
+        .scan-animation.active {
+            display: block;
+        }
+
+        .scanner-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+        }
+
+        .scan-text {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            width: 0%;
+            transition: width 0.3s;
+            animation: loading 3s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .link-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .link-text a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .link-text a:hover {
+            text-decoration: underline;
+        }
+
+        .success-icon {
+            text-align: center;
+            font-size: 60px;
+            color: #38ef7d;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn {
+            margin-top: 10px;
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: #ee5a52;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to GoAI App</h1>
-    <p>Current Date and Time (UTC): 2026-02-22 19:46:19</p>
+    <div class="container">
+        <div class="header">
+            <div class="logo">GOai</div>
+            <div class="company">POWERED BY NEXA</div>
+        </div>
+
+        <div class="content">
+            <!-- Экран регистрации -->
+            <div id="registerScreen" class="screen active">
+                <h2>Регистрация</h2>
+                <p class="subtitle">Создайте аккаунт для работы с нейросетью</p>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="name">Полное имя</label>
+                        <input type="text" id="name" placeholder="Иван Иванов" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="ivan@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password" placeholder="Минимум 6 символов" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </form>
+
+                <div class="link-text">
+                    Уже есть аккаунт? <a href="#" id="goToLogin">Войти</a>
+                </div>
+            </div>
+
+            <!-- Экран входа -->
+            <div id="loginScreen" class="screen">
+                <h2>Вход в систему</h2>
+                <p class="subtitle">Войдите в свой аккаунт GOai</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="ivan@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Пароль</label>
+                        <input type="password" id="loginPassword" placeholder="Введите пароль" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </form>
+
+                <div class="link-text">
+                    Нет аккаунта? <a href="#" id="goToRegister">Зарегистрироваться</a>
+                </div>
+            </div>
+
+            <!-- Экран главной панели -->
+            <div id="dashboardScreen" class="screen">
+                <h2>Панель управления</h2>
+                <p class="subtitle">Добро пожаловать в GOai нейросеть</p>
+                
+                <div class="user-info">
+                    <div class="user-info-item">
+                        <span class="user-info-label">Имя:</span>
+                        <span class="user-info-value" id="userName">-</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Email:</span>
+                        <span class="user-info-value" id="userEmail">-</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Статус:</span>
+                        <span class="user-info-value" style="color: #38ef7d;">✓ Активен</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-scan" id="scanBtn">
+                    📄 Сканировать мои документы
+                </button>
+
+                <button class="btn logout-btn" id="logoutBtn">
+                    Выйти из аккаунта
+                </button>
+            </div>
+
+            <!-- Экран сканирования -->
+            <div id="scanningScreen" class="screen">
+                <div class="scan-animation active">
+                    <div class="scanner-icon">🔍</div>
+                    <div class="scan-text">Сканирование документов...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Экран результата -->
+            <div id="resultScreen" class="screen">
+                <div class="success-icon">✓</div>
+                <h2>Сканирование завершено</h2>
+                <p class="subtitle">Ваши документы успешно обработаны нейросетью GOai</p>
+                
+                <div class="user-info">
+                    <div class="user-info-item">
+                        <span class="user-info-label">Документов найдено:</span>
+                        <span class="user-info-value">12</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Обработано:</span>
+                        <span class="user-info-value">100%</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">Время обработки:</span>
+                        <span class="user-info-value">3.2 сек</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="backToDashboard">
+                    Вернуться на главную
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Управление экранами
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Хранилище пользователей
+        let users = JSON.parse(localStorage.getItem('goai_users')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('goai_current_user')) || null;
+
+        // Проверка авторизации при загрузке
+        if (currentUser) {
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            showScreen('dashboardScreen');
+        }
+
+        // Регистрация
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Проверка существующего пользователя
+            if (users.some(user => user.email === email)) {
+                alert('Пользователь с таким email уже существует!');
+                return;
+            }
+
+            const newUser = { name, email, password };
+            users.push(newUser);
+            localStorage.setItem('goai_users', JSON.stringify(users));
+            
+            currentUser = newUser;
+            localStorage.setItem('goai_current_user', JSON.stringify(currentUser));
+            
+            document.getElementById('userName').textContent = name;
+            document.getElementById('userEmail').textContent = email;
+            
+            showScreen('dashboardScreen');
+            document.getElementById('registerForm').reset();
+        });
+
+        // Вход
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('goai_current_user', JSON.stringify(currentUser));
+                
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                
+                showScreen('dashboardScreen');
+                document.getElementById('loginForm').reset();
+            } else {
+                alert('Неверный email или пароль!');
+            }
+        });
+
+        // Переключение между входом и регистрацией
+        document.getElementById('goToLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            showScreen('loginScreen');
+        });
+
+        document.getElementById('goToRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            showScreen('registerScreen');
+        });
+
+        // Сканирование документов
+        document.getElementById('scanBtn').addEventListener('click', () => {
+            showScreen('scanningScreen');
+            
+            setTimeout(() => {
+                showScreen('resultScreen');
+            }, 3500);
+        });
+
+        // Возврат на главную
+        document.getElementById('backToDashboard').addEventListener('click', () => {
+            showScreen('dashboardScreen');
+        });
+
+        // Выход
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('goai_current_user');
+                currentUser = null;
+                showScreen('registerScreen');
+            }
+        });
+    </script>
 </body>
 </html>
